@@ -47,8 +47,8 @@ public class Wallet {
     return this.cpf;
   }
 
-  public WalletType getType() {
-    return this.type;
+  public Integer getType() {
+    return this.type.getValue();
   }
 
   public BigDecimal getBalance() {

@@ -2,7 +2,7 @@ package org.renanlido.transactions.application.useCases;
 
 import org.renanlido.shared.exceptions.Either;
 import org.renanlido.shared.exceptions.ExceptionTypes;
-import org.renanlido.transactions.application.dtos.CreateTransactionInputDTO;
+import org.renanlido.transactions.application.dtos.PerformTransactionInputDTO;
 import org.renanlido.transactions.application.useCases.exceptions.TransactionsException;
 import org.renanlido.transactions.domain.Transaction;
 import org.renanlido.transactions.domain.repository.ITransactionRepository;
@@ -19,11 +19,11 @@ public class PerformTransactionUseCase {
     this.walletRepository = walletRepository;
   }
 
-  public Either<TransactionsException, Void> execute(CreateTransactionInputDTO input) {
-    var payerWallet = walletRepository.findById(input.payerId());
-    var payeeWallet = walletRepository.findById(input.payeeId());
+  public Either<TransactionsException, Void> execute(PerformTransactionInputDTO input) {
+    var payerWallet = walletRepository.findById(input.payerWalletId());
+    var payeeWallet = walletRepository.findById(input.payeeWalletId());
 
-    if (input.payerId() == input.payeeId()) {
+    if (input.payerWalletId() == input.payeeWalletId()) {
       return Either.left(new TransactionsException(ExceptionTypes.INVALID_ARGUMENT, "Payer and payee cannot be the same"));
     }
 
@@ -42,7 +42,7 @@ public class PerformTransactionUseCase {
 
     payeeWallet.deposit(input.value());
 
-    var transaction = new Transaction(null, input.payerId(), input.payeeId(), input.value(), null);
+    var transaction = new Transaction(null, input.payerWalletId(), input.payeeWalletId(), input.value(), null);
 
     transactionRepository.save(transaction);
 

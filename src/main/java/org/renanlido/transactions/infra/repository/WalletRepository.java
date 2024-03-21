@@ -1,6 +1,7 @@
 package org.renanlido.transactions.infra.repository;
 
 import org.renanlido.transactions.domain.Wallet;
+import org.renanlido.transactions.domain.WalletType;
 import org.renanlido.transactions.domain.repository.IWalletRepository;
 import org.renanlido.transactions.infra.record.WalletRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class WalletRepository implements IWalletRepository {
         record.email(),
         record.password(),
         record.cpf(),
-        record.type(),
+        WalletType.getById(record.type()),
         record.balance()
     );
   }
@@ -69,7 +70,7 @@ public class WalletRepository implements IWalletRepository {
         record.email(),
         record.password(),
         record.cpf(),
-        record.type(),
+        WalletType.getById(record.type()),
         record.balance()
     )).toArray(Wallet[]::new);
   }

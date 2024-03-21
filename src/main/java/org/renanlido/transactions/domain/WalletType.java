@@ -9,6 +9,14 @@ public enum WalletType {
     this.value = value;
   }
 
+  public static WalletType getById(int id) {
+    for (WalletType e : values()) {
+      if (e.value == id) {
+        return e;
+      }
+    }
+    throw new IllegalArgumentException("Invalid WalletType id: " + id);
+  }
   public int getValue() {
     return value;
   }

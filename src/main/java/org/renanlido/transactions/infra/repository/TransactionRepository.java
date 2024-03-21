@@ -21,7 +21,7 @@ public class TransactionRepository implements ITransactionRepository {
 
   @Override
   public void save(Transaction transaction) {
-    TransactionRecord record = new TransactionRecord(transaction.getId(), transaction.getPayerId(), transaction.getPayerId(), transaction.getValue(), transaction.getCreatedAt());
+    TransactionRecord record = new TransactionRecord(transaction.getId(), transaction.getPayerId(), transaction.getPayeeId(), transaction.getValue(), transaction.getCreatedAt());
 
     repositorySpringData.save(record);
   }

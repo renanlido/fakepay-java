@@ -1,16 +1,14 @@
 package org.renanlido.transactions.infra.controller;
 
-import org.renanlido.transactions.application.dtos.CreateTransactionInputDTO;
+import org.renanlido.transactions.application.dtos.PerformTransactionInputDTO;
 import org.renanlido.transactions.application.useCases.PerformTransactionUseCase;
 import org.renanlido.transactions.application.useCases.exceptions.TransactionsException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("transaction")
+
+@RequestMapping("transactions")
 public class TransactionController {
 
   private final PerformTransactionUseCase performTransactionUseCase;
@@ -20,8 +18,13 @@ public class TransactionController {
     this.performTransactionUseCase = performTransactionUseCase;
   }
 
+  @GetMapping
+  public String hello() {
+    return "Hello World!";
+  }
+
   @PostMapping
-  public ResponseEntity<String> performTransaction(@RequestBody CreateTransactionInputDTO input) {
+  public ResponseEntity<String> performTransaction(@RequestBody PerformTransactionInputDTO input) {
     var transaction = performTransactionUseCase.execute(input);
 
     if (transaction.isLeft()) {
