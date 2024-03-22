@@ -41,7 +41,7 @@ public class Transaction {
   public LocalDateTime getCreatedAt() {
     return this.createdAt;
   }
-  
+
   public void validate() {
     if (this.payerId.equals(this.payeeId)) {
       throw new IllegalArgumentException("Payer and payee cannot be the same");

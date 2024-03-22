@@ -7,13 +7,16 @@ import org.renanlido.transactions.application.useCases.exceptions.TransactionsEx
 import org.renanlido.transactions.domain.Transaction;
 import org.renanlido.transactions.domain.repository.ITransactionRepository;
 import org.renanlido.transactions.domain.repository.IWalletRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PerformTransactionUseCase {
-  private final ITransactionRepository transactionRepository;
-  private final IWalletRepository walletRepository;
+  private final @Qualifier("TransactionRepository") ITransactionRepository transactionRepository;
+  private final @Qualifier("WalletRepository") IWalletRepository walletRepository;
 
+  @Autowired
   public PerformTransactionUseCase(ITransactionRepository transactionRepository, IWalletRepository walletRepository) {
     this.transactionRepository = transactionRepository;
     this.walletRepository = walletRepository;
@@ -42,9 +45,7 @@ public class PerformTransactionUseCase {
 
     payeeWallet.deposit(input.value());
 
-    var transaction = new Transaction(null, input.payerWalletId(), input.payeeWalletId(), input.value(), null);
-
-    transactionRepository.save(transaction);
+    transactionRepository.create(new Transaction(null, input.payerWalletId(), input.payeeWalletId(), input.value(), null));
 
     walletRepository.save(payerWallet);
     walletRepository.save(payeeWallet);

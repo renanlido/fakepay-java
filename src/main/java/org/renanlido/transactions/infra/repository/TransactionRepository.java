@@ -1,15 +1,16 @@
 package org.renanlido.transactions.infra.repository;
 
+import org.jetbrains.annotations.NotNull;
 import org.renanlido.transactions.domain.Transaction;
 import org.renanlido.transactions.domain.repository.ITransactionRepository;
-import org.renanlido.transactions.infra.record.TransactionRecord;
+import org.renanlido.transactions.infra.model.TransactionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Repository("TransactionRepository")
 public class TransactionRepository implements ITransactionRepository {
   private final ITransactionRepositorySpring repositorySpringData;
 
@@ -18,17 +19,22 @@ public class TransactionRepository implements ITransactionRepository {
     this.repositorySpringData = repositorySpringData;
   }
 
+  public void create(@NotNull Transaction transaction) {
+    try {
 
-  @Override
-  public void save(Transaction transaction) {
-    TransactionRecord record = new TransactionRecord(transaction.getId(), transaction.getPayerId(), transaction.getPayeeId(), transaction.getValue(), transaction.getCreatedAt());
 
-    repositorySpringData.save(record);
+      TransactionModel model = new TransactionModel(transaction.getId(), transaction.getPayerId(), transaction.getPayeeId(), transaction.getValue(), transaction.getCreatedAt());
+
+
+      repositorySpringData.save(model);
+    } catch (Exception e) {
+      throw new RuntimeException("Error creating transaction", e);
+    }
   }
 
   @Override
   public Transaction findById(UUID id) {
-    TransactionRecord record = repositorySpringData.findById(id).orElse(null);
+    TransactionModel record = repositorySpringData.findById(id).orElse(null);
 
     if (record == null) {
       return null;
@@ -38,10 +44,9 @@ public class TransactionRepository implements ITransactionRepository {
   }
 
   @Override
-  public Transaction[] findAll() {
-    TransactionRecord[] records = repositorySpringData.findAll().toArray(new TransactionRecord[0]);
+  public List<Transaction> findAll() {
+    List<TransactionModel> models = repositorySpringData.findAll();
 
-
-    return Arrays.stream(records).map(record -> new Transaction(record.id(), record.payerId(), record.payerId(), record.value(), record.createdAt())).toArray(Transaction[]::new);
+    return models.stream().map(model -> new Transaction(model.id(), model.payerId(), model.payerId(), model.value(), model.createdAt())).toList();
   }
 }

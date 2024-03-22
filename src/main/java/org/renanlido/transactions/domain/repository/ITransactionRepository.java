@@ -2,13 +2,14 @@ package org.renanlido.transactions.domain.repository;
 
 import org.renanlido.transactions.domain.Transaction;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ITransactionRepository {
-  void save(Transaction transaction);
+  void create(Transaction transaction);
 
   Transaction findById(UUID id);
 
-  Transaction[] findAll();
+  List<Transaction> findAll();
 
 }

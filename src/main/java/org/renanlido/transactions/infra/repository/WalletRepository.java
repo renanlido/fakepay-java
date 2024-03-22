@@ -1,20 +1,18 @@
 package org.renanlido.transactions.infra.repository;
 
+import org.jetbrains.annotations.NotNull;
 import org.renanlido.transactions.domain.Wallet;
 import org.renanlido.transactions.domain.WalletType;
 import org.renanlido.transactions.domain.repository.IWalletRepository;
-import org.renanlido.transactions.infra.record.WalletRecord;
+import org.renanlido.transactions.infra.model.WalletModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-@Repository
+@Repository("WalletRepository")
 public class WalletRepository implements IWalletRepository {
   private final IWalletRepositorySpring repositorySpring;
 
@@ -25,8 +23,8 @@ public class WalletRepository implements IWalletRepository {
 
 
   @Override
-  public void save(Wallet transaction) {
-    WalletRecord record = new WalletRecord(
+  public void save(@NotNull Wallet transaction) {
+    WalletModel record = new WalletModel(
         transaction.getId(),
         transaction.getFullName(),
         transaction.getEmail(),
@@ -41,7 +39,7 @@ public class WalletRepository implements IWalletRepository {
 
   @Override
   public Wallet findById(UUID id) {
-    WalletRecord record = repositorySpring.findById(id).orElse(null);
+    WalletModel record = repositorySpring.findById(id).orElse(null);
 
     if (record == null) {
       return null;
@@ -60,18 +58,24 @@ public class WalletRepository implements IWalletRepository {
 
   @Override
   public Wallet[] findAll() {
-    Iterator<WalletRecord> iterator = repositorySpring.findAll().iterator();
-    Stream<WalletRecord> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false);
+    List<WalletModel> models = repositorySpring.findAll();
 
 
-    return stream.map(record -> new Wallet(
-        record.id(),
-        record.fullName(),
-        record.email(),
-        record.password(),
-        record.cpf(),
-        WalletType.getById(record.type()),
-        record.balance()
-    )).toArray(Wallet[]::new);
+    List<Wallet> list = new ArrayList<>();
+
+    for (WalletModel model : models) {
+      Wallet wallet = new Wallet(
+          model.id(),
+          model.fullName(),
+          model.email(),
+          model.password(),
+          model.cpf(),
+          WalletType.getById(model.type()),
+          model.balance()
+      );
+      list.add(wallet);
+    }
+    
+    return list.toArray(new Wallet[0]);
   }
 }
